@@ -1,14 +1,14 @@
 import numpy as np
 import pandas as pd
 import os
-def read_csv():
-    symbols = pd.read_csv('./tech_1.csv')
+def read_csv(symbol_path, stock_path='./'):
+    symbols = pd.read_csv(symbol_path)
     symbols = symbols['Symbol']
     num_arrays = len(symbols)
     stock_list ={}
     for i in range(num_arrays):
-        if os.path.exists('./data/'+symbols[i]+".csv"):
-            df = pd.read_csv('./data/'+symbols[i]+".csv")
+        if os.path.exists(stock_path+symbols[i]+".csv"):
+            df = pd.read_csv(stock_path+symbols[i]+".csv")
             df['Date'] = pd.to_datetime(df['Date'])
             df.set_index('Date', inplace=True)
             df = df.drop(columns=['Dividends', 'Stock Splits'],axis=1)
@@ -194,7 +194,7 @@ class cs:
         return final_df_list
 if __name__ == "__main__":
     # ------------------read data usage-----------------
-    stock_list=read_csv()
+    stock_list=read_csv("./tech_1.csv","./data/")
     # ------------------cross sectional usage-----------------
     CS=cs(stock_list)
     final_df_list=CS.rank('Close')
