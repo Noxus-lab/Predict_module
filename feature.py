@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import os
+
 def read_csv(symbol_path, stock_path='./'):
     symbols = pd.read_csv(symbol_path)
     symbols = symbols['Symbol']
@@ -59,7 +60,7 @@ def divide_columns(df1,df2,col):
 class ts_func:
     def __init__(self, df):
         self.df = df.copy()
-        
+        self.date_copy = df.index
     def ts_max(self,col,window):
         ans=[]
         for i in range(len(self.df[col])):
@@ -69,6 +70,8 @@ class ts_func:
                 ans.append(self.df[col][i-window:i].max())
         ans_df=pd.DataFrame()
         ans_df[col]=ans
+        ans_df['Date']=self.date_copy
+        ans_df.set_index('Date', inplace=True)
         return ans_df
     
     def ts_min(self,col,window):
@@ -80,6 +83,8 @@ class ts_func:
                 ans.append(self.df[col][i-window:i].min())
         ans_df=pd.DataFrame()
         ans_df[col]=ans
+        ans_df['Date']=self.date_copy
+        ans_df.set_index('Date', inplace=True)
         return ans_df
     
     def ts_rank(self,col,window,constant=0):
@@ -91,6 +96,8 @@ class ts_func:
                 ans.append(self.df[col][i-window:i].rank()[-1]+constant)
         ans_df=pd.DataFrame()
         ans_df[col]=ans
+        ans_df['Date']=self.date_copy
+        ans_df.set_index('Date', inplace=True)
         return ans_df
     
 
@@ -103,6 +110,8 @@ class ts_func:
                 ans.append(self.df[col1][i-window:i].corr(df2[col2][i-window:i]))
         ans_df=pd.DataFrame()
         ans_df[col1]=ans
+        ans_df['Date']=self.date_copy
+        ans_df.set_index('Date', inplace=True)
         return ans_df
     def ts_std_dev(self,col,window):
         ans = []
@@ -113,6 +122,8 @@ class ts_func:
                 ans.append(self.df[col][i-window:i].std())
         ans_df=pd.DataFrame()
         ans_df[col]=ans
+        ans_df['Date']=self.date_copy
+        ans_df.set_index('Date', inplace=True)
         return ans_df
     def ts_zscore(self, col, window):
         ans = []
@@ -123,6 +134,8 @@ class ts_func:
                 ans.append((self.df[col][i]-self.df[col][i-window:i].mean())/self.df[col][i-window:i].std())
         ans_df=pd.DataFrame()
         ans_df[col]=ans
+        ans_df['Date']=self.date_copy
+        ans_df.set_index('Date', inplace=True)
         return ans_df
     def ts_mean(self, col, window):
         ans = []
@@ -133,6 +146,8 @@ class ts_func:
                 ans.append(self.df[col][i-window:i].mean())
         ans_df=pd.DataFrame()
         ans_df[col]=ans
+        ans_df['Date']=self.date_copy
+        ans_df.set_index('Date', inplace=True)
         return ans_df
     
     def ts_delay(self, col, window):
@@ -144,6 +159,8 @@ class ts_func:
                 ans.append(self.df[col][i-window])
         ans_df=pd.DataFrame()
         ans_df[col]=ans
+        ans_df['Date']=self.date_copy
+        ans_df.set_index('Date', inplace=True)
         return ans_df
     
     def ts_delta(self,col,window):
@@ -155,13 +172,21 @@ class ts_func:
             else:
                 ans.append(self.df[col][i]-self.df[col][i-window])
         ans_df[col]=ans
+        ans_df['Date']=self.date_copy
+        ans_df.set_index('Date', inplace=True)
         return ans_df
 #Cross Sectional Operator
 class cs:
     def __init__(self,df_list):
         self.df_list=df_list
+        for name in df_list:
+            self.date_copy=df_list[name].index
+            break
+        # print(self.date_copy)
     def rank(self,col):
         record_df = pd.DataFrame()
+        record_df['Date']=self.date_copy
+        record_df.set_index('Date', inplace=True)
         count=0
         for df in self.df_list:
             record_df[str(count)]=self.df_list[df][col].copy()
@@ -176,6 +201,8 @@ class cs:
         return final_df_list
     def normalize(self, col, useStd=False):
         record_df = pd.DataFrame()
+        record_df['Date']=self.date_copy
+        record_df.set_index('Date', inplace=True)
         count=0
         for df in self.df_list:
             record_df[str(count)]=self.df_list[df][col]
@@ -192,22 +219,30 @@ class cs:
             ans_df[col]=record_df.iloc[:,i]
             final_df_list.append(ans_df)
         return final_df_list
+def create_feature_list_ts(name_list, alpha_list):
+    df=pd.DataFrame()
+    for idx,name in enumerate(name_list):
+        df[name]=alpha_list[idx].iloc[:,0]
+    return df
 if __name__ == "__main__":
     # ------------------read data usage-----------------
     stock_list=read_csv("./tech_1.csv","./data/")
     # ------------------cross sectional usage-----------------
     CS=cs(stock_list)
-    final_df_list=CS.rank('Close')
-    final_df_list=CS.normalize('Close')
+    # final_df_list=CS.rank('Close')
+    # final_df_list=CS.normalize('Close')
     
     # ------------------time series usage-----------------
     tmp=ts_func(stock_list['AAPL'])
-    print(tmp.ts_max('Open',5))
-    print(tmp.ts_min('Open',5))
-    print(tmp.ts_rank('Open',5))
-    print(tmp.ts_corr('Open',stock_list['GOOG'],'Open',5))
-    print(tmp.ts_std_dev('Open',5))
-    print(tmp.ts_zscore('Open',5))
-    print(tmp.ts_mean('Volume',5))
-    print(tmp.ts_delay('Open',5))
-    print(tmp.ts_delta('Open',5))
+    # print(tmp.ts_max('Open',5))
+    # print(tmp.ts_min('Open',5))
+    # print(tmp.ts_rank('Open',5))
+    # print(tmp.ts_corr('Open',stock_list['GOOG'],'Open',5))
+    # print(tmp.ts_std_dev('Open',5))
+    # print(tmp.ts_zscore('Open',5))
+    # print(tmp.ts_mean('Volume',5))
+    # print(tmp.ts_delay('Open',5))
+    # print(tmp.ts_delta('Open',5))
+    # ------------------final usage-----------------
+    df=create_feature_list_ts(['a','b'],[tmp.ts_max('Open',5),tmp.ts_min('Open',5)])
+    print(df)
