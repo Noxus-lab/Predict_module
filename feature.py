@@ -113,6 +113,30 @@ class ts_func:
         ans_df['Date']=self.date_copy
         ans_df.set_index('Date', inplace=True)
         return ans_df
+    def ts_cov(self,col1,df2,col2,window):
+        ans = []
+        for i in range(len(self.df[col1])):
+            if(i<window):
+                ans.append(np.nan)
+            else:
+                ans.append(self.df[col1][i-window:i].cov(df2[col2][i-window:i]))
+        ans_df=pd.DataFrame()
+        ans_df[col1]=ans
+        ans_df['Date']=self.date_copy
+        ans_df.set_index('Date', inplace=True)
+        return ans_df
+    def ts_var(self,col1,window):
+        ans = []
+        for i in range(len(self.df[col1])):
+            if(i<window):
+                ans.append(np.nan)
+            else:
+                ans.append(self.df[col1][i-window:i].var())
+        ans_df=pd.DataFrame()
+        ans_df[col1]=ans
+        ans_df['Date']=self.date_copy
+        ans_df.set_index('Date', inplace=True)
+        return ans_df
     def ts_std_dev(self,col,window):
         ans = []
         for i in range(len(self.df[col])):
@@ -234,6 +258,8 @@ if __name__ == "__main__":
     
     # ------------------time series usage-----------------
     tmp=ts_func(stock_list['AAPL'])
+    print(tmp.ts_cov('Open',stock_list['GOOG'],'Open',5))
+    print(tmp.ts_var('Open',5))
     # print(tmp.ts_max('Open',5))
     # print(tmp.ts_min('Open',5))
     # print(tmp.ts_rank('Open',5))
