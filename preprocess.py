@@ -28,7 +28,7 @@ def fillNan(df:pd.DataFrame, train_data_num, neighbors=3):
     df_out[train_data_num:] = pd.DataFrame(imputed, columns=df.columns)
     return df_out
 
-def standardScaler(df:pd.DataFrame, train_data_num, scale_list):
+def standardScaler(df:pd.DataFrame, scale_list):
     df_out = df.copy()
     
     scaler = StandardScaler()
@@ -55,5 +55,5 @@ if __name__ == "__main__":
     # print(df)
 
     #-------------------standardScaler------------------
-    df = standardScaler(stock_list['AAPL'],500,['Open','Close'])
+    df = standardScaler(stock_list['AAPL'],['Open','Close'])
     # print(df.head())
