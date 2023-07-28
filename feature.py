@@ -61,6 +61,9 @@ class ts_func:
     def __init__(self, df):
         self.df = df.copy()
         self.date_copy = df.index
+    def update(self, df):
+        self.df = df.copy()
+        self.date_copy = df.index
     def ts_max(self,col,window):
         ans=[]
         for i in range(len(self.df[col])):

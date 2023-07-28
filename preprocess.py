@@ -28,19 +28,19 @@ def fillNan(df:pd.DataFrame, train_data_num, neighbors=3):
     df_out[train_data_num:] = pd.DataFrame(imputed, columns=df.columns)
     return df_out
 
-def standardScaler(df:pd.DataFrame, train_data_num):
+def standardScaler(df:pd.DataFrame, train_data_num, scale_list):
     df_out = df.copy()
     
     scaler = StandardScaler()
     # Fit the scaler to the DataFrame
-    scaler.fit(df_out[:train_data_num])
+    for col in scale_list:
+        scaler.fit(df_out[col].to_numpy().reshape(-1,1))
 
-    # Transform the DataFrame to standardize the numerical features
-    standardized_data = scaler.transform(df_out)
-    standard_df=pd.DataFrame(standardized_data, columns=df_out.columns)
-    standard_df['Date']=df.index
-    standard_df.set_index('Date', inplace=True)
-    return standard_df
+        # Transform the DataFrame to standardize the numerical features
+        standardized_data = scaler.transform(df_out[col].to_numpy().reshape(-1,1))
+        df_out[col]=standardized_data
+
+    return df_out
 
 if __name__ == "__main__":
     # ------------------read data usage-----------------
@@ -55,5 +55,5 @@ if __name__ == "__main__":
     # print(df)
 
     #-------------------standardScaler------------------
-    df = standardScaler(stock_list['AAPL'],500)
+    df = standardScaler(stock_list['AAPL'],500,['Open','Close'])
     # print(df.head())
