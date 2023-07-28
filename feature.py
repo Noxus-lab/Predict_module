@@ -199,6 +199,13 @@ class ts_func:
         ans_df['Date']=self.date_copy
         ans_df.set_index('Date', inplace=True)
         return ans_df
+    def pct_change(self,col):
+        ans_df=pd.DataFrame()
+        ans_df[col+'_growth_rate'] = self.df[col].pct_change()
+        ans_df['Date'] = self.date_copy
+        ans_df.set_index('Date', inplace=True)
+        return ans_df
+        
 #Cross Sectional Operator
 class cs:
     def __init__(self,df_list):
@@ -258,8 +265,9 @@ if __name__ == "__main__":
     
     # ------------------time series usage-----------------
     tmp=ts_func(stock_list['AAPL'])
-    print(tmp.ts_cov('Open',stock_list['GOOG'],'Open',5))
-    print(tmp.ts_var('Open',5))
+    # print(tmp.ts_cov('Open',stock_list['GOOG'],'Open',5))
+    # print(tmp.ts_var('Open',5))
+    # print(tmp.pct_change('Open'))
     # print(tmp.ts_max('Open',5))
     # print(tmp.ts_min('Open',5))
     # print(tmp.ts_rank('Open',5))
@@ -270,5 +278,5 @@ if __name__ == "__main__":
     # print(tmp.ts_delay('Open',5))
     # print(tmp.ts_delta('Open',5))
     # ------------------final usage-----------------
-    df=create_feature_list_ts(['a','b'],[tmp.ts_max('Open',5),tmp.ts_min('Open',5)])
-    print(df)
+    # df=create_feature_list_ts(['a','b'],[tmp.ts_max('Open',5),tmp.ts_min('Open',5)])
+    # print(df)
