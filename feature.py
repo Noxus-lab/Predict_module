@@ -18,6 +18,8 @@ def read_csv(symbol_path, stock_path='./'):
 def sub_columns(df1,df2,col):
     ans=[]
     ans_df=pd.DataFrame()
+    ans_df['Date']=df1.index
+    ans_df.set_index('Date', inplace=True)
     for i in range(len(df1[col])):
         if(df1[col][i]!=np.nan and df2[col][i]!=np.nan):
             ans.append(df1[col][i]-df2[col][i])
@@ -28,6 +30,8 @@ def sub_columns(df1,df2,col):
 def add_columns(df1,df2,col):
     ans=[]
     ans_df=pd.DataFrame()
+    ans_df['Date']=df1.index
+    ans_df.set_index('Date', inplace=True)
     for i in range(len(df1[col])):
         if(df1[col][i]!=np.nan and df2[col][i]!=np.nan):
             ans.append(df1[col][i]+df2[col][i])
@@ -38,6 +42,8 @@ def add_columns(df1,df2,col):
 def multiply_columns(df1,df2,col):
     ans=[]
     ans_df=pd.DataFrame()
+    ans_df['Date']=df1.index
+    ans_df.set_index('Date', inplace=True)
     for i in range(len(df1[col])):
         if(df1[col][i]!=np.nan and df2[col][i]!=np.nan):
             ans.append(df1[col][i]*df2[col][i])
@@ -49,6 +55,8 @@ def multiply_columns(df1,df2,col):
 def divide_columns(df1,df2,col):
     ans=[]
     ans_df=pd.DataFrame()
+    ans_df['Date']=df1.index
+    ans_df.set_index('Date', inplace=True)
     for i in range(len(df1[col])):
         if(df1[col][i]!=np.nan and df2[col][i]!=np.nan):
             ans.append(df1[col][i]/df2[col][i])
